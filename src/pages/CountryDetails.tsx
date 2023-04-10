@@ -8,6 +8,7 @@ import { FaSpinner } from "react-icons/fa";
 import { AiFillFlag } from "react-icons/ai";
 import { GiEdgedShield } from "react-icons/gi";
 import { FlagDisplay } from "../enums/FlagDisplay";
+import { Tooltip } from "react-tooltip";
 
 interface CountryProps {
   name: {
@@ -51,7 +52,7 @@ export default function CountryDetails() {
   };
 
   useEffect(() => {
-    const fetchCountries = async () => {
+    const fetchCountry = async () => {
       try {
         setIsLoading(true);
         const response = await axios.get<CountryProps[]>(
@@ -64,7 +65,7 @@ export default function CountryDetails() {
         console.log(error);
       }
     };
-    fetchCountries();
+    fetchCountry();
     window.scrollTo(0, 0);
   }, [code]);
 
@@ -79,20 +80,31 @@ export default function CountryDetails() {
             <BsArrowLeft className="mr-2" />
             Back
           </button>
-          <button
-            className="shadow-lg py-3 px-4 rounded inline-flex items-center dark:bg-darkBlue dark:text-white text-sm focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-amber-500"
-            onClick={toggleFlagDisplay}
-          >
-            {flagDisplay === FlagDisplay.Flag ? (
-              <div className="flex items-center">
-                <GiEdgedShield className="h-4 w-4" />
-              </div>
-            ) : (
-              <div className="flex items-center">
-                <AiFillFlag className="h-4 w-4" />
-              </div>
-            )}
-          </button>
+          {flagDisplay === FlagDisplay.Flag ? (
+            <>
+              <button
+                className="shadow-lg py-3 px-4 rounded inline-flex items-center dark:bg-darkBlue dark:text-white text-sm focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-amber-500"
+                onClick={toggleFlagDisplay}
+                data-tooltip-id="coatOfArms"
+                data-tooltip-content="Show Coat of Arms"
+              >
+                <GiEdgedShield className="h-5 w-5" />
+              </button>
+              <Tooltip id="coatOfArms" place="bottom" />
+            </>
+          ) : (
+            <>
+              <button
+                className="shadow-lg py-3 px-4 rounded inline-flex items-center dark:bg-darkBlue dark:text-white text-sm focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-amber-500"
+                onClick={toggleFlagDisplay}
+                data-tooltip-id="countryFlag"
+                data-tooltip-content="Show Flag"
+              >
+                <AiFillFlag className="h-5 w-5" />
+              </button>
+              <Tooltip id="countryFlag" place="bottom" />
+            </>
+          )}
         </div>
         {isLoading && (
           <FaSpinner className="w-16 h-16 text-amber-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animateSpinner" />

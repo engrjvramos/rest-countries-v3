@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import FilterByRegion from "../components/FilterByRegion";
+import SortOptionsList from "../components/SortOptionsList";
+import Sort from "../components/Sort";
 import Search from "../components/Search";
 import axios from "axios";
 import Card from "../components/Card";
@@ -25,8 +27,9 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [countries, setCountries] = useState<CountriesProps[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
-
-  const [regionFilter, setRegionFilter] = useState("");
+  const [regionFilter, setRegionFilter] = useState<string>("");
+  const [sortBy, setSortBy] = useState<string>("");
+  const [sortOption, setSortOption] = useState<string>("Ascending");
   const [currentPage, setCurrentPage] = useState<number>(0);
 
   useEffect(() => {
@@ -60,6 +63,28 @@ export default function Home() {
       (regionFilter === "" || country.region === regionFilter),
   );
 
+  if (sortBy === "Sort by Name") {
+    filteredCountries.sort((a, b) => {
+      if (a.name.common < b.name.common) {
+        return sortOption === "Ascending" ? -1 : 1;
+      }
+      if (a.name.common > b.name.common) {
+        return sortOption === "Ascending" ? 1 : -1;
+      }
+      return 0;
+    });
+  } else if (sortBy === "Sort by Population") {
+    filteredCountries.sort((a, b) => {
+      if (a.population < b.population) {
+        return sortOption === "Ascending" ? -1 : 1;
+      }
+      if (a.population > b.population) {
+        return sortOption === "Ascending" ? 1 : -1;
+      }
+      return 0;
+    });
+  }
+
   const pageCount = Math.ceil(filteredCountries.length / Paginate.PageSize);
 
   const handlePageChange = ({ selected }: { selected: number }) => {
@@ -76,11 +101,19 @@ export default function Home() {
       <div className="max-w-7xl mx-auto sm:px-5 px-10 pb-10">
         <div className="flex items-center justify-between gap-5 flex-col lg:flex-row">
           <Search searchTerm={searchTerm} handleSearch={handleSearch} />
-          <FilterByRegion
-            regionFilter={regionFilter}
-            setRegionFilter={setRegionFilter}
-            setCurrentPage={setCurrentPage}
-          />
+          <div className="flex items-center gap-3 flex-row flex-wrap max-[650px]:w-full">
+            <Sort
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              sortOption={sortOption}
+              setSortOption={setSortOption}
+            />
+            <FilterByRegion
+              regionFilter={regionFilter}
+              setRegionFilter={setRegionFilter}
+              setCurrentPage={setCurrentPage}
+            />
+          </div>
         </div>
 
         {isLoading && (
@@ -118,8 +151,8 @@ export default function Home() {
               containerClassName="flex justify-between items-center w-full"
               previousLabel="Previous"
               nextLabel="Next"
-              previousClassName="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-              nextClassName="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              previousClassName="relative inline-flex items-center rounded border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:bg-darkBlue dark:text-white"
+              nextClassName="relative ml-3 inline-flex items-center rounded border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:bg-darkBlue dark:text-white"
               pageClassName="hidden"
               initialPage={0}
               forcePage={currentPage}

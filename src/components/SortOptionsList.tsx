@@ -2,34 +2,26 @@ import { Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { FiChevronDown } from "react-icons/fi";
 import { AiOutlineCheck } from "react-icons/ai";
-import Regions from "../enums/Regions";
+import SortOptions from "../enums/SortOptions";
 
-const items = Object.values(Regions);
+const items = Object.values(SortOptions);
 
-interface RegionProps {
-  regionFilter: string;
-  setRegionFilter: React.Dispatch<React.SetStateAction<string>>;
-  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+interface Props {
+  sortOption: string;
+  setSortOption: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function FilterByRegion({
-  regionFilter,
-  setRegionFilter,
-  setCurrentPage,
-}: RegionProps) {
-  const handleRegionFilter = (value: string) => {
-    setRegionFilter(value);
-    setCurrentPage(0);
+export default function SortOptionsList({ sortOption, setSortOption }: Props) {
+  const handleSortOption = (value: string) => {
+    setSortOption(value);
   };
 
   return (
-    <div className="w-full sm:w-[180px]">
-      <Listbox value={regionFilter} onChange={handleRegionFilter}>
+    <div className="w-[180px]">
+      <Listbox value={sortOption} onChange={handleSortOption}>
         <div className="relative mt-1">
           <Listbox.Button className="relative w-full cursor-pointer rounded bg-white dark:bg-darkBlue text-veryDarkBlue2 dark:text-white py-3 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 text-sm  ">
-            <span className="block truncate">
-              {regionFilter === "" ? "Filter by Region" : regionFilter}
-            </span>
+            <span className="block truncate">{sortOption}</span>
             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
               <FiChevronDown
                 className="h-5 w-5 text-gray-400"
@@ -54,14 +46,14 @@ export default function FilterByRegion({
                         : "text-veryDarkBlue2"
                     }`
                   }
-                  value={item === "Default" ? "" : item}
+                  value={item}
                 >
                   {({ selected }) => (
                     <>
                       <span
                         className={`block truncate ${
-                          item === "Default" && "opacity-50"
-                        } ${selected ? "font-semibold" : "font-normal"}`}
+                          selected ? "font-semibold" : "font-normal"
+                        }`}
                       >
                         {item}
                       </span>
